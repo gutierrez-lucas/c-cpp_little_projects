@@ -61,23 +61,25 @@ int main(){
 	}
 
 	head = array_to_list(data, sizeof(data)/sizeof(int));
-	print_list(head, "data in head: ");
+	print_list(head, "data in head: \n");
 	bubble_sort_list(&head);
 // must pass direction of pointer in order to be able to modify its direction
 // this is only necessary if the first element must be swaped	
-	print_list(head, "data sorted: ");
+	print_list(head, "data sorted: \n");
 	printf("\n");
 	return(0);
 }
 
 void print_list(list *h, char *title){
+	int position = 0;
 	printf("%s", title);
 	while(h != NULL){
-		printf("%d :", h -> data);
+		printf("%02d :", h -> data);
 		h = h -> next;
-	}
-		if( h == NULL){
-		printf(": X");
+		if(++position>4){
+			position = 0;
+			printf("\n");
+		}
 	}
 	printf("\n");
 }

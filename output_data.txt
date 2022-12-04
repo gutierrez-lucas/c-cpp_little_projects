@@ -1,0 +1,1 @@
+Average of stored numbers: 816.50 / Max number: 6549
