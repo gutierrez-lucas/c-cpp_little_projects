@@ -13,7 +13,7 @@ int count_list(list *h);
 list* array_to_list(int d[], int size);
 list* add_to_front(int data, list* h);
 list* create_list(int new_data);
-void print_list(list *h, char *title);
+void print_list_foward(list *h, char *title);
 
 int bubble_sort_list(list** h){
 // in order to modify the content of first element (without only swaping its data)
@@ -61,16 +61,16 @@ int main(){
 	}
 
 	head = array_to_list(data, sizeof(data)/sizeof(int));
-	print_list(head, "data in head: \n");
+	print_list_foward(head, "data in head: \n");
 	bubble_sort_list(&head);
 // must pass direction of pointer in order to be able to modify its direction
 // this is only necessary if the first element must be swaped	
-	print_list(head, "data sorted: \n");
+	print_list_foward(head, "data sorted: \n");
 	printf("\n");
 	return(0);
 }
 
-void print_list(list *h, char *title){
+void print_list_foward(list *h, char *title){
 	int position = 0;
 	printf("%s", title);
 	while(h != NULL){

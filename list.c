@@ -11,7 +11,7 @@ typedef struct list{
 
 int is_empty(const list *l){return (l==NULL);}
 
-void print_list(list *h, char *title){
+void print_list_foward(list *h, char *title){
 	printf("%s", title);
 	while(h != NULL){
 		printf("%d :", h -> data);
@@ -158,9 +158,9 @@ int main(){
 	}
 
 	head = array_to_list(data, sizeof(data)/sizeof(int));
-	print_list(head, "data in head: ");
+	print_list_foward(head, "data in head: ");
 	bubble_sort_list(&head);
-	print_list(head, "data sorted: ");
+	print_list_foward(head, "data sorted: ");
 	printf("\n");
 	return(0);
 }
