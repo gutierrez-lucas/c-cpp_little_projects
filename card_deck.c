@@ -3,6 +3,7 @@
 #include <string.h>
 #include <assert.h>
 
+#define CARDS_IN_DECK 52
 enum suits{
     club, diamond, heart, spade
 };
@@ -13,14 +14,20 @@ typedef struct list{
     struct list* prev;
 }list;
 
+typedef struct ptrlist{
+    list* head;
+    list* tail;
+}ptrlist;
+
 list* array_to_list(short new_pip[], short new_suit[], int size, list** tail);
 list* add_card_to_front(short new_pip, short new_suit, list* h);
 list* create_card_list(short new_pip, short new_suit);
 list* get_list_element(list* h, int element);
 int swap_element_in_list(list** h, int target_position);
 int count_list(list *h);
-void print_list_foward(list *head, char *title);
-void print_list_backward(list *tail, char *title);
+#define FOWARD 0
+#define BACKWARD 1
+void print_list(ptrlist ptr_list, char *title, int mode);
 int remove_list_element(list **element);
 int bubble_sort_list(list** head, list** tail);
 
@@ -37,12 +44,11 @@ list* get_list_element(list* h, int element){
 	return(h);
 }
 
-int main(){
-	list* head = NULL;
-	list* tail = NULL;
+ptrlist build_deck(){
+    ptrlist new_deck_list;
 
-	short pip_vector[52];
-	short suit_vector[52];
+	short pip_vector[CARDS_IN_DECK];
+	short suit_vector[CARDS_IN_DECK];
 
 	for(int i=0; i<=3; i++){
 		for(int j=1; j<=13; j++){
@@ -51,22 +57,29 @@ int main(){
 		}
 	}
 
-	head = array_to_list(pip_vector, suit_vector, 52, &tail);
-	print_list_foward(head, "data in head: \n");
-	print_list_backward(tail, "data in head: \n");
+	new_deck_list.head = array_to_list(pip_vector, suit_vector, CARDS_IN_DECK, &(new_deck_list.tail));
+
+    return(new_deck_list);
+}
+
+int main(){
+    ptrlist my_list;
+    my_list = build_deck();
 
 	list* auxiliar;
 	int removed_elements = 0;
-	printf("elements in list: %d\n", count_list(head));
+	printf("elements in list: %d\n", count_list(my_list.head));
+	print_list(my_list, "data in head: \n", FOWARD);
+
 	while(removed_elements<=24){
-		auxiliar = get_list_element(head, rand()%51);
+		auxiliar = get_list_element(my_list.head, rand()%CARDS_IN_DECK);
 		if(auxiliar!=NULL){
 			removed_elements++;
 			remove_list_element(&auxiliar);
 		}
 	}
-	printf("elements in list: %d\n", count_list(head));
-	print_list_backward(tail, "data in head: \n");
+	printf("elements in list: %d\n", count_list(my_list.head));
+	print_list(my_list, "data in tail: \n", BACKWARD);
 
 	printf("\n");
 	return(0);
@@ -185,12 +198,18 @@ int remove_list_element(list **element){
 	return 1;
 }
 
-void print_list_backward(list *tail, char *title){
+void print_list(ptrlist ptr_list, char *title, int mode){
 	int position = 0;
+    list* aux;
+    if(mode==FOWARD){
+        aux = ptr_list.head;
+    }else{
+        aux = ptr_list.tail;
+    }
 	printf("%s", title);
-	while(tail != NULL){
-		printf("%02d of", tail -> pip);
-		switch (tail -> suit){
+	while(aux != NULL){
+		printf("%02d of", aux -> pip);
+		switch (aux -> suit){
 		case(club):
 			printf(" clubs");
 			break;
@@ -204,43 +223,15 @@ void print_list_backward(list *tail, char *title){
 			printf(" spades");
 			break;		
 		default:
-			printf("unknown suit: %d", tail ->suit);
+			printf("unknown suit: %d", aux ->suit);
 			break;
 		}
 		printf("\n");
-		tail = tail -> prev;
-		if(++position>12){
-			position = 0;
-			printf("\n");
-		}
-	}
-	printf("\n");
-}
-
-void print_list_foward(list *head, char *title){
-	int position = 0;
-	printf("%s", title);
-	while(head != NULL){
-		printf("%02d of", head -> pip);
-		switch (head -> suit){
-		case(club):
-			printf(" clubs");
-			break;
-		case(heart):
-			printf(" hearts");
-			break;
-		case(diamond):
-			printf(" diamonds");
-			break;
-		case(spade):
-			printf(" spades");
-			break;		
-		default:
-			printf("unknown suit: %d", head ->suit);
-			break;
-		}
-		printf("\n");
-		head = head -> next;
+        if(mode==FOWARD){
+            aux = aux -> next;
+        }else{
+            aux = aux -> prev;
+        }
 		if(++position>12){
 			position = 0;
 			printf("\n");
