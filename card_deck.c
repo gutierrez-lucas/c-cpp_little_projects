@@ -30,6 +30,7 @@ int count_list(list *h);
 void print_list(ptrlist ptr_list, char *title, int mode);
 int remove_list_element(list **element);
 int bubble_sort_list(list** head, list** tail);
+int move_element_to_list(list** head, list** tail, list **element);
 
 list* get_list_element(list* h, int element){
 	int size_of_list = count_list(h) - 1;
@@ -63,23 +64,38 @@ ptrlist build_deck(){
 }
 
 int main(){
-    ptrlist my_list;
-    my_list = build_deck();
+    ptrlist full_deck, seven_hands, one_hand;
+    full_deck = build_deck();
 
 	list* auxiliar;
 	int removed_elements = 0;
-	printf("elements in list: %d\n", count_list(my_list.head));
-	print_list(my_list, "data in head: \n", FOWARD);
+	printf("elements in list: %d\n", count_list(full_deck.head));
+	print_list(full_deck, "data in head: \n", FOWARD);
 
 	while(removed_elements<=24){
-		auxiliar = get_list_element(my_list.head, rand()%CARDS_IN_DECK);
-		if(auxiliar!=NULL){
-			removed_elements++;
-			remove_list_element(&auxiliar);
-		}
-	}
-	printf("elements in list: %d\n", count_list(my_list.head));
-	print_list(my_list, "data in tail: \n", BACKWARD);
+        auxiliar = get_list_element(full_deck.head, rand()%CARDS_IN_DECK);
+        if(auxiliar!=NULL){
+            removed_elements++;
+            move_element_to_list(&seven_hands.head, &seven_hands.tail, &auxiliar);
+        }
+    }
+	print_list(full_deck, "data in head: \n", FOWARD);
+	print_list(seven_hands, "data in other tail: \n", FOWARD);
+//////////////////////////////////////
+    removed_elements = 0;
+	while(removed_elements<=5){
+        auxiliar = get_list_element(seven_hands.head, rand()%24);
+        if(auxiliar!=NULL){
+            removed_elements++;
+            move_element_to_list(&one_hand.head, &one_hand.tail, &auxiliar);
+        }
+    }
+	print_list(seven_hands, "data in 7 hands--: \n", FOWARD);
+	print_list(one_hand, "data in one hand: \n", FOWARD);
+    malloc
+	// }
+	// printf("elements in list: %d\n", count_list(full_deck.head));
+	// print_list(my_list, "data in tail: \n", BACKWARD);
 
 	printf("\n");
 	return(0);
@@ -198,6 +214,41 @@ int remove_list_element(list **element){
 	return 1;
 }
 
+int move_element_to_list(list** head, list** tail, list **element){
+    list* to_remove;
+    list* aux;
+
+	if(to_remove==NULL) return 0;
+    to_remove = *element;
+
+    if(to_remove -> next == NULL){
+        // remove the head        
+        to_remove -> prev -> next = NULL;
+        *element = to_remove -> prev;
+    }else if(to_remove -> prev == NULL){
+        // remove the tail
+        to_remove -> next -> prev = NULL;
+        *element = to_remove -> next;
+    }else{
+        to_remove -> next -> prev = to_remove -> prev;
+        to_remove -> prev -> next = to_remove -> next;
+    }
+
+    if((*head) == NULL){
+        *head = create_card_list(to_remove -> pip,to_remove -> suit);
+    }else{
+        aux = array_to_list(&(to_remove -> pip), &(to_remove -> suit), 1, &tail);
+        aux -> next = (*head)->next;
+        aux -> prev = (*head);
+        (*head)->next = aux;
+
+    }
+
+    free(to_remove); // free the removed element from heap
+
+	return 1;
+}
+
 void print_list(ptrlist ptr_list, char *title, int mode){
 	int position = 0;
     list* aux;
@@ -232,10 +283,7 @@ void print_list(ptrlist ptr_list, char *title, int mode){
         }else{
             aux = aux -> prev;
         }
-		if(++position>12){
-			position = 0;
-			printf("\n");
-		}
+
 	}
 	printf("\n");
 }
